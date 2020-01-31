@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.new_ui_layout.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +25,11 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.new_ui_layout)
+        fab.setOnClickListener {
+            Log.i("Clicked", "fab clicked")
+        }
+        /*
         prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
         editor = prefs.edit()
         gson = Gson()
@@ -53,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             Toast.makeText(this, "No event or past event set, you must set a new event",
                 Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
