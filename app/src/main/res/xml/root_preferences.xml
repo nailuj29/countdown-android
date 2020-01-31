@@ -17,11 +17,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="Notifications">
-
+        <!--TODO: Implement constant notification
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="preference_constant_notif"
-            android:title="Show notification constantly" />
+            android:title="Show notification constantly" />-->
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="preference_show_daily_notif"

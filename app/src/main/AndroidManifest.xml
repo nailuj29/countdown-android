@@ -9,10 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver
-            android:name=".NotificationReciever"
-            android:enabled="true"
-            android:exported="true"></receiver>
 
         <activity
             android:name=".SettingsActivity"
