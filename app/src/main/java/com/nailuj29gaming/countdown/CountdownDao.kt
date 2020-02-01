@@ -11,5 +11,6 @@ interface CountdownDao {
     @Query("SELECT * FROM countdown WHERE id IN (:ids)")
     fun getById(uids: IntArray): List<Countdown>
 
-    @Query("SELECT * FROM countdown SORT BY ")
+    @Query("SELECT * FROM countdown ORDER BY date")
+    fun sortByDates(): List<Countdown>
 }

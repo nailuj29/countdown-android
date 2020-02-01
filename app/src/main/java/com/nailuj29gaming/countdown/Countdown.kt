@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 data class Countdown(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "event_name") val eventName: String?,
-    @ColumnInfo(name = "date") val date: Date?
+    @ColumnInfo(name = "date") val date: Int?
 )
