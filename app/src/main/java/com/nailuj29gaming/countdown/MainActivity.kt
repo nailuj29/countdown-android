@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.room.Room
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.new_ui_layout.*
@@ -29,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             Log.i("Clicked", "fab clicked")
         }
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "countdowns"
+        ).build()
+
         /*
         prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
         editor = prefs.edit()

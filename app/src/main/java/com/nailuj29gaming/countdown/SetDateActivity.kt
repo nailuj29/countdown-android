@@ -23,29 +23,14 @@ class SetDateActivity : AppCompatActivity() {
         setContentView(R.layout.activity_set_date)
         setSupportActionBar(tootbarSetDate)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
+        /*prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
         editor = prefs.edit()
-        gson = Gson()
+        gson = Gson()*/
         submit.setOnClickListener {
             date?.let {
                 Log.i("date:", it.toString())
-                if(it > Date()) {
-                    if(enterName.text.toString() != "") {
-                        val dateString = gson.toJson(it)
-                        editor.putString("date", dateString)
-                        editor.putString("name", enterName.text.toString())
-                        editor.putBoolean("date_set", true)
-                        editor.commit()
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this, "You must enter a name for your event",
-                            Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-                } else {
-                    Toast.makeText(this, "The date must be in the future.",
-                        Toast.LENGTH_SHORT).show()
+                val replyIntent = Intent()
+                
                 }
             }
         }

@@ -1,10 +1,11 @@
 package com.nailuj29gaming.countdown
 
 import androidx.room.Database
+import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(entities = arrayOf(Countdown::class), version = 1)
 @TypeConverters(Converters::class)
-abstract class AppDatabase {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun countdownDao(): CountdownDao
 }
