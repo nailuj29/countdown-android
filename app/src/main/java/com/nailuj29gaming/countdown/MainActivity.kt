@@ -11,12 +11,14 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.new_ui_layout.*
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var names: MutableList<String>
     lateinit var dates: MutableList<Date>
-    var db: AppDatabase? = null
+    private lateinit var viewModel: CountdownViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,61 +43,23 @@ class MainActivity : AppCompatActivity() {
             val date = gson.fromJson(prefs.getString("date", ""), Date::class.java)
             val name = prefs.getString("name", "Example Event")
         }
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "countdowns"
-        ).build()
-        val dao = db?.countdownDao()
-        val countdowns = dao?.getAll()
-        if (countdowns != null) {
-            for (countdown in countdowns) {
-                if (countdown.date > Date()) {
-                    dates.add(countdown.date)
-                    names.add(countdown.eventName)
-                } else
-                    dao.delete(countdown)
-                names.add(countdown.eventName)
-            }
+
+
+        val adapter = CountdownAdapter(this)
+        recyclerView.adapter = adapter
+        viewModel = ViewModelProvider(this).get(CountdownViewModel::class.java)
+        viewModel.countdowns.observe(this, Observer { countdowns ->
+            countdowns?.let { adapter.countdowns = it }
         }
-        recyclerView.adapter = CountdownAdapter(applicationContext, dates, names)
 
+        )
 
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.settings -> {
-                Toast.makeText(this, "Settings not currently implemented, will be added in a future update",
-                    Toast.LENGTH_SHORT).show()
-                // val intent = Intent(this, SettingsActivity::class.java)
-                // startActivity(intent)
-            }
-            R.id.changeDate -> {
-                val intent = Intent(this, SetDateActivity::class.java)
-                startActivity(intent)
-            }
-        }
-        return true
-    }
+    
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK) {
-            val dao = db?.countdownDao()
-            dao?.insert(Countdown(data?.getStringExtra(SetDateActivity.EXTRA_NAME)!!, Date(data.getLongExtra(SetDateActivity.EXTRA_DATE, Date().time)!!)))
-            recreate()
-        } else {
-            Toast.makeText(applicationContext,
-                R.string.toast_not_set,
-                Toast.LENGTH_LONG
-                ).show()
-        }
+        TODO("Implement onActivityResult")
     }
 
 
