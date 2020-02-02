@@ -1,10 +1,12 @@
 package com.nailuj29gaming.countdown
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.widget.CalendarView
 import android.widget.Toast
@@ -30,7 +32,12 @@ class SetDateActivity : AppCompatActivity() {
             date?.let {
                 Log.i("date:", it.toString())
                 val replyIntent = Intent()
-                
+                if (TextUtils.isEmpty(enterName.text) || it < Date()) {
+                    setResult(Activity.RESULT_CANCELED)
+                } else {
+                    replyIntent.putExtra(EXTRA_NAME, enterName.text.toString())
+                    replyIntent.putExtra(EXTRA_DATE, it.time)
+                    finish()
                 }
             }
         }
@@ -38,5 +45,11 @@ class SetDateActivity : AppCompatActivity() {
             val cal = GregorianCalendar(year, month, dayOfMonth)
             date = cal.time
         }
+
+    }
+
+    companion object {
+        const val EXTRA_DATE = "com.nailuj29gaming.countdown.DATE"
+        const val EXTRA_NAME = "com.nailuj29gaming.countdown.NAME"
     }
 }

@@ -6,9 +6,7 @@
     <string name="settings">Settings</string>
     <string name="change_date_item">Change Date</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="channel_name">@string/app_name</string>
-    <string name="channel_description">Notifications from the Countdown app from Nailuj29 Gaming</string>
-
+    <string name="toast_not_set">Event not created because date was in past or name not set</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>

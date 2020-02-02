@@ -1,6 +1,7 @@
 package com.nailuj29gaming.countdown
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.new_ui_layout.*
@@ -18,54 +20,47 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-    lateinit var prefs: SharedPreferences
-    lateinit var editor: SharedPreferences.Editor
-    lateinit var gson: Gson
-    var date: Date = Date()
-    var name: String = ""
-    @SuppressLint("CommitPrefEdits")
+
+
+    lateinit var names: MutableList<String>
+    lateinit var dates: MutableList<Date>
+    var db: AppDatabase? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_ui_layout)
         fab.setOnClickListener {
             Log.i("Clicked", "fab clicked")
         }
-        val db = Room.databaseBuilder(
+        if(!getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
+                .getBoolean("migrated", false) &&
+           getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
+               .getBoolean("date_set", false)) {
+            val prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
+            val gson = Gson()
+            val date = gson.fromJson(prefs.getString("date", ""), Date::class.java)
+            val name = prefs.getString("name", "Example Event")
+        }
+        db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "countdowns"
         ).build()
-
-        /*
-        prefs = getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
-        editor = prefs.edit()
-        gson = Gson()
-        if (!prefs.getBoolean("date_set", false)) {
-            val intent = Intent(this, SetDateActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(this, "No event or past event set, you must set a new event",
-                Toast.LENGTH_SHORT).show()
-        } else {
-            //Shouldn't get to this point unless date and name are set; assuming they are
-            name = prefs.getString("name", "Name").toString()
-            date = gson.fromJson(prefs.getString("date", ""), Date::class.java)
-            Log.i("date-MainActivity", date.toString())
+        val dao = db?.countdownDao()
+        val countdowns = dao?.getAll()
+        if (countdowns != null) {
+            for (countdown in countdowns) {
+                if (countdown.date > Date()) {
+                    dates.add(countdown.date)
+                    names.add(countdown.eventName)
+                } else
+                    dao.delete(countdown)
+                names.add(countdown.eventName)
+            }
         }
-        toolbar.title = getString(R.string.app_name)
-        setSupportActionBar(toolbar)
-        eventName.text = name
+        recyclerView.adapter = CountdownAdapter(applicationContext, dates, names)
 
-        val diffInMillis = date.time - Date().time
-        //Difference drops a day, so add it back
-        val days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) + 1
-        Log.i("diff", days.toString())
-        daysLeft.text = days.toString()
-        if(days < 0) {
-            val intent = Intent(this, SetDateActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(this, "No event or past event set, you must set a new event",
-                Toast.LENGTH_SHORT).show()
-        }*/
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,10 +84,19 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    //Debug to test SetDateActivity
-    /*override fun onPause() {
-        editor.putBoolean("date_set", false)
-        editor.apply()
-        super.onPause()
-    }*/
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK) {
+            val dao = db?.countdownDao()
+            dao?.insert(Countdown(data?.getStringExtra(SetDateActivity.EXTRA_NAME)!!, Date(data.getLongExtra(SetDateActivity.EXTRA_DATE, Date().time)!!)))
+            recreate()
+        } else {
+            Toast.makeText(applicationContext,
+                R.string.toast_not_set,
+                Toast.LENGTH_LONG
+                ).show()
+        }
+    }
+
+
 }
