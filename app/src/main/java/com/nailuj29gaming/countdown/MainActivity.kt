@@ -1,29 +1,20 @@
 package com.nailuj29gaming.countdown
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.new_ui_layout.*
-import java.util.Date
-import java.util.concurrent.TimeUnit
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
-
+    val requestCode = 42 // Life, the universe, and everything
     lateinit var names: MutableList<String>
     lateinit var dates: MutableList<Date>
     private lateinit var viewModel: CountdownViewModel
@@ -32,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_ui_layout)
         fab.setOnClickListener {
-            Log.i("Clicked", "fab clicked")
+            val intent = Intent(this@MainActivity, SetDateActivity::class.java)
+            startActivityForResult(intent, requestCode)
         }
         if(!getSharedPreferences("com.nailuj29gaming.countdown", Context.MODE_PRIVATE)
                 .getBoolean("migrated", false) &&
@@ -55,11 +47,19 @@ class MainActivity : AppCompatActivity() {
         )
 
     }
-    
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        TODO("Implement onActivityResult")
+        if(requestCode == this.requestCode && requestCode == Activity.RESULT_OK) {
+            data?.getStringExtra(SetDateActivity.EXTRA_NAME)?.let { name ->
+                data?.getLongExtra(SetDateActivity.EXTRA_DATE, 0)?.let { date ->
+                    val countdown = Countdown(name, Date(date))
+                    viewModel.insert(countdown)
+                    
+                }
+            }
+        }
     }
 
 
