@@ -1,10 +1,9 @@
 *.iml
 *.zip
-.gradle
-*.pro
 /local.properties
 /.idea
 .DS_Store
+.gradle
 /build
 /gradle
 /captures

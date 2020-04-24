@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.new_ui_layout.*
 import java.util.*
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     val requestCode = 42 // Life, the universe, and everything
     lateinit var names: MutableList<String>
     lateinit var dates: MutableList<Date>
-    private val viewModel: CountdownViewModel by viewModels()
+    private val viewModel: CountdownViewModel by viewModels { CountdownFactory(this.application)  }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +43,16 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val adapter = CountdownAdapter(this)
+        val adapter = CountdownAdapter(viewModel, this)
+        val llm = LinearLayoutManager(this)
+        llm.orientation = LinearLayoutManager.VERTICAL
+        recyclerView.layoutManager = llm
         recyclerView.adapter = adapter
         viewModel.countdowns.observe(this, Observer { countdowns ->
-            countdowns?.let { adapter.countdowns = it }
-        }
-
-        )
+            countdowns?.let {
+                adapter.countdowns = it
+            }
+        })
 
     }
 
@@ -58,6 +63,8 @@ class MainActivity : AppCompatActivity() {
             data?.getStringExtra(SetDateActivity.EXTRA_NAME)?.let { name ->
                 data.getLongExtra(SetDateActivity.EXTRA_DATE, 0).let { date ->
                     val countdown = Countdown(name, Date(date))
+                    Log.i("Countdown.date", countdown.date.toString())
+                    Log.i("Countdown.eventName", countdown.eventName)
                     viewModel.insert(countdown)
                     recreate()
                 }

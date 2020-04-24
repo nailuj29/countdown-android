@@ -11,8 +11,9 @@ interface CountdownDao {
     @Query("SELECT * FROM countdown")
     fun getAll(): LiveData<List<Countdown>>
 
-    @Query("SELECT * FROM countdown ORDER BY date")
+    @Query("SELECT * FROM countdown ORDER BY date ASC")
     fun sortByDates(): LiveData<List<Countdown>>
+
     @Insert
     suspend fun insertAll(vararg countdowns: Countdown)
 

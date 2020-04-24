@@ -9,7 +9,7 @@ class CountdownRepo(private val dao: CountdownDao) {
         dao.insert(countdown)
     }
 
-    suspend fun  delete(countdown: Countdown) {
+    suspend fun delete(countdown: Countdown) {
         dao.delete(countdown)
     }
 }
