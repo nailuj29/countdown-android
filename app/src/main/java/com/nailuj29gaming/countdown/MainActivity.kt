@@ -13,7 +13,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.new_ui_layout.*
 import java.util.*
 
-
+const val TAG = "com.nailuj29gaming"
 class MainActivity : AppCompatActivity() {
 
     val requestCode = 42 // Life, the universe, and everything
@@ -62,9 +62,10 @@ class MainActivity : AppCompatActivity() {
         if(requestCode == this.requestCode && requestCode == Activity.RESULT_OK) {
             data?.getStringExtra(SetDateActivity.EXTRA_NAME)?.let { name ->
                 data.getLongExtra(SetDateActivity.EXTRA_DATE, 0).let { date ->
+
                     val countdown = Countdown(name, Date(date))
-                    Log.i("Countdown.date", countdown.date.toString())
-                    Log.i("Countdown.eventName", countdown.eventName)
+                    Log.i(TAG, countdown.date.toString())
+                    Log.i(TAG, countdown.eventName)
                     viewModel.insert(countdown)
                     recreate()
                 }
