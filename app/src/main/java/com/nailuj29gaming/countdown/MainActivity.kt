@@ -17,7 +17,7 @@ import java.util.*
 const val TAG = "com.nailuj29gaming"
 class MainActivity : AppCompatActivity() {
 
-    val requestCode = 42 // Life, the universe, and everything
+    private val requestCode = 42 // Life, the universe, and everything
     lateinit var names: MutableList<String>
     lateinit var dates: MutableList<Date>
     private val viewModel: CountdownViewModel = ViewModelProvider(this).get(CountdownViewModel::class.java)
@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.countdowns.observe(this, Observer { countdowns ->
             countdowns?.let {
                 adapter.countdowns = it
+                Log.i(TAG, it.toString())
             }
         })
 
